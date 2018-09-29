@@ -1,0 +1,138 @@
+##  New Case Study 
+
+q <- read.csv("C:/Users/eaeehiy/Desktop/R/q/data_train.csv")
+z <- q
+dim(z) # 596000 Rows and 58 columns.
+str(z)
+# All are given in int and num.
+
+sapply(z, function(x) sum(is.na(x)))
+
+ # num1   num2   num3   num4   num5   num6   num7   num8   num9  num10  num11  num12  num13  num14  num15 
+ # 0      0      0      0      0      0      0      0      0      0      0      0      0      0      0 
+ # num16  num17  num19  num20  num21  num22  num23   der1   der2   der3   der4   der5   der6   der7   der8 
+ # 0      0      5      1      0  42667      0      0      0      0      0      0      0      0      0 
+ # der9  der10  der11  der12  der13  der14  der15  der16  der17  der18  der19   cat1   cat2   cat3   cat4 
+ # 0      0      0      0      0      0      0      0      0      0      0    217     83   5814    107 
+ # cat5   cat7   cat9  cat10  cat11  cat12  cat13  cat14 target 
+ # 5      0      0  11503      0    570      0      0      0 
+
+# So we can see many na values in various columns
+#  num18, num22, cat6, cat8 columns can be dropped as they have most na values 
+#we will drop id as well
+ z <- z[, -c(1,19,49,51)]
+
+sapply(z, function(x) sum(is.nan(x)))
+
+# num1   num2   num3   num4   num5   num6   num7   num8   num9  num10  num11  num12  num13  num14  num15 
+# 0      0      0      0      0      0      0      0      0      0      0      0      0      0      0 
+# num16  num17  num19  num20  num21  num22  num23   der1   der2   der3   der4   der5   der6   der7   der8 
+# 0      0      0      0      0      0      0      0      0      0      0      0      0      0      0 
+# der9  der10  der11  der12  der13  der14  der15  der16  der17  der18  der19   cat1   cat2   cat3   cat4 
+# 0      0      0      0      0      0      0      0      0      0      0      0      0      0      0 
+# cat5   cat7   cat9  cat10  cat11  cat12  cat13  cat14 target 
+# 0      0      0      0      0      0      0      0      0 
+
+## NO NAN Values
+## So let us begin by removing/imputing the NA values.
+
+library(dplyr)
+clean_z<-mutate (z,num22 = ifelse(is.na(num22), 0.37, num22)) # column num22 is imputed using its mean.
+# NA values in other cloumns were removed.
+clean_z<-mutate (clean_z,num19 = ifelse(is.na(num19), !(is.na(clean_z$num19)) , num19))
+clean_z<-mutate (clean_z,num20 = ifelse(is.na(num20), !(is.na(clean_z$num20)) , num20))
+## now coming to categorical values
+## removing all the categorical na values
+clean_z<-mutate (clean_z,cat1 = ifelse(is.na(cat1), !(is.na(clean_z$cat1)) , cat1))
+clean_z<-mutate (clean_z,cat2 = ifelse(is.na(cat2), !(is.na(clean_z$cat2)) , cat2))
+clean_z<-mutate (clean_z,cat3 = ifelse(is.na(cat3), !(is.na(clean_z$cat3)) , cat3))
+clean_z<-mutate (clean_z,cat4 = ifelse(is.na(cat4), !(is.na(clean_z$cat1)) , cat4))
+clean_z<-mutate (clean_z,cat5 = ifelse(is.na(cat5), !(is.na(clean_z$cat5)) , cat5))
+clean_z<-mutate (clean_z,cat10 = ifelse(is.na(cat10), !(is.na(clean_z$cat10)) , cat10))
+clean_z<-mutate (clean_z,cat12 = ifelse(is.na(cat12), !(is.na(clean_z$cat12)) , cat12))
+
+ # again checking for the na values 
+ 
+ sapply(clean_z, function(x) sum(is.na(x)))
+ 
+  # num1   num2   num3   num4   num5   num6   num7   num8   num9  num10  num11  num12  num13  num14  num15 
+  #   0      0      0      0      0      0      0      0      0      0      0      0      0      0      0 
+  #num16  num17  num19  num20  num21  num22  num23   der1   der2   der3   der4   der5   der6   der7   der8 
+  #   0      0      0      0      0      0      0      0      0      0      0      0      0      0      0 
+  #der9  der10  der11  der12  der13  der14  der15  der16  der17  der18  der19   cat1   cat2   cat3   cat4 
+  #  0      0      0      0      0      0      0      0      0      0      0      0      0      0      0 
+  #cat5   cat7   cat9  cat10  cat11  cat12  cat13  cat14 target 
+  #  0      0      0      0      0      0      0      0      0 
+ ## Now there are no NA values
+ 
+## now let us convert the "cat" columns into factors
+
+
+clean_z$cat1 <- as.factor(as.character(clean_z$cat1))
+clean_z$cat2 <- as.factor(as.character(clean_z$cat2))
+clean_z$cat3 <- as.factor(as.character(clean_z$cat3))
+clean_z$cat4 <- as.factor(as.character(clean_z$cat4))
+clean_z$cat5 <- as.factor(as.character(clean_z$cat5))
+clean_z$cat7 <- as.factor(as.character(clean_z$cat7))
+clean_z$cat9 <- as.factor(as.character(clean_z$cat9))
+clean_z$cat10 <- as.factor(as.character(clean_z$cat10))
+clean_z$cat11 <- as.factor(as.character(clean_z$cat11))
+clean_z$cat12 <- as.factor(as.character(clean_z$cat12))
+clean_z$cat13 <- as.factor(as.character(clean_z$cat13))
+clean_z$cat14 <- as.factor(as.character(clean_z$cat14))
+clean_z$target <- as.factor(as.character(clean_z$target))
+
+# on checkin the data again der15-der19 has only 2 values (0 and 1), therefore it can be factor
+
+clean_z$der15 <- as.factor(as.character(clean_z$der15))
+clean_z$der16 <- as.factor(as.character(clean_z$der16))
+clean_z$der17 <- as.factor(as.character(clean_z$der17))
+clean_z$der18 <- as.factor(as.character(clean_z$der18))
+clean_z$der19 <- as.factor(as.character(clean_z$der19))
+
+str(clean_z) # Now the data set is classified into factors and integers.
+
+
+## let us try and find some correlation (if prsent) between numerical variables 
+
+cr <-cor(z)
+library(car)
+library(corrgram)
+corrgram(z, type = "data")
+
+library(corrplot)
+
+mydata <- z[, c(1:36)]
+cr <- cor(mydata)
+library(corrplot)
+corrplot(cr, method = "circle", na.label = TRUE)
+# on studyding the graph of co relation ,  few variables were found to have some corelation between them.
+
+##let us proceed and built model
+#splitting the data
+library(caTools)
+set.seed(1111)
+
+# sample the input data with 70% for training and 30% for testing
+sample <- sample.split(clean_z$target,SplitRatio=0.70)
+train_data <- subset(clean_z,sample==TRUE)#split of the data using subset command 
+test_data <- subset(clean_z,sample==FALSE)
+#building model
+library(rpart)
+library(rattle)
+library(rpart.plot)
+library(RColorBrewer)
+ model <- rpart(target~., data = train_data)
+
+#Building confusion matrix and calculating accuracy.
+pred<- predict(model,test_data,type = "class")
+pred1<-data.frame(pred)
+table(test_data$target ,pred)
+# 0      1
+# 0 172285      0
+# 1   6515      0
+
+#The accuracy turned out to be 96%
+
+ 
+ 
